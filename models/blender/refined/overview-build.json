@@ -1,0 +1,10 @@
+{
+  "scene": "overview",
+  "blender": "5.2.2 LTS",
+  "detail_assemblies": 18,
+  "detail_polygons": 9446,
+  "reference_objects": 2960,
+  "coordinate_system": "meters, Three Y up -> Blender Z up",
+  "export": "detail overlay only; original animations stay in JS",
+  "asset_ids": "demo identifiers, not live SCADA bindings"
+}

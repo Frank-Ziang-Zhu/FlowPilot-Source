@@ -1,0 +1,131 @@
+{
+  "version": "2026-10-05-restored",
+  "endpoint": "POST /api/run",
+  "status": "GET /api/status",
+  "request": {
+    "engine": [
+      "asm",
+      "sumo"
+    ],
+    "process": [
+      "a2o",
+      "oxidation"
+    ],
+    "baseline_and_optimized": {
+      "air": {
+        "unit": "Nm3/h",
+        "range": [
+          0,
+          5000
+        ]
+      },
+      "volume": {
+        "unit": "m3",
+        "range": [
+          4000,
+          9000
+        ]
+      },
+      "pump": {
+        "unit": "L/day",
+        "range": [
+          40000,
+          90000
+        ],
+        "meaning": "legacy sideflow, not internal recycle"
+      },
+      "recycle": {
+        "unit": "Q_recycle/Q_in",
+        "range": [
+          0,
+          4
+        ],
+        "default": 2
+      },
+      "forecast": {
+        "type": "boolean",
+        "note": "reserved flag, not a forecast solver"
+      }
+    },
+    "scenario": {
+      "peakFlow": {
+        "unit": "m3/h",
+        "range": [
+          100,
+          3000
+        ]
+      },
+      "influentNh": {
+        "unit": "mgN/L",
+        "range": [
+          1,
+          100
+        ]
+      },
+      "influentCod": {
+        "unit": "mgCOD/L",
+        "range": [
+          30,
+          600
+        ],
+        "default": 220,
+        "note": "not exposed in current plant UI"
+      },
+      "temperature": {
+        "unit": "C",
+        "range": [
+          5,
+          35
+        ]
+      },
+      "limit": {
+        "unit": "mgN/L",
+        "meaning": "UI compliance threshold"
+      }
+    }
+  },
+  "asm_response": {
+    "baseline": "simulation result",
+    "optimized": "simulation result",
+    "engine": "asm",
+    "process": "a2o or oxidation",
+    "calibrated": false,
+    "series_units": {
+      "t": "day (0 to 1)",
+      "snhx": "mgN/L",
+      "snox": "mgN/L",
+      "cod": "mgCOD/L soluble modeled state, not validated total-COD measurement",
+      "do": "mgO2/L",
+      "flow": "m3/h"
+    },
+    "samples": 25,
+    "sampling": "0 to 24 hours, hourly",
+    "ui_sampling": "first 24 samples rendered as 00:00-23:00",
+    "energy_kwh_m3": "empirical coefficient estimate, not meter readings"
+  },
+  "limitations": [
+    "two mixed zones, fixed biomass, 24-hour warmup and dynamic run",
+    "anaerobic metabolism and biological phosphorus removal absent",
+    "ditch velocity, sludge blanket, pump frequency and auxiliary telemetry are demo data",
+    "no calibrated uncertainty intervals",
+    "SUMO process only registered for A2O; missing runtime/errors fall back in frontend to ASM",
+    "SUMO inlet scenario fields are not fully mapped",
+    "network domain is a separate assumed diagnostic visualization, not an ASM or SWMM result",
+    "no SCADA or PLC control; initial history is demo and not durable"
+  ],
+  "network_mass_balance": {
+    "flux": "Q[m3/h] * COD[mg/L] / 1000 = kgCOD/h",
+    "required": "aligned B/C/D/A/plant Q and COD, branch topology, pump curves and sample timing",
+    "uncertainty": "requires replicate samples, instrument errors and model calibration; currently unavailable"
+  },
+  "asset_binding": {
+    "existing": "userData.unit",
+    "future_required": [
+      "unit_id",
+      "sensor_id",
+      "actuator_id",
+      "animation_role"
+    ],
+    "GLB": "static snapshot; JS animations require separate binding"
+  }
+}

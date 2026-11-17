@@ -1,0 +1,10 @@
+FlowPilot v1.0.0
+Browser -> local HTTP server -> simplified ASM engine -> JSON -> charts / 3D overlay
+Browser -> local JS diagnostic rules -> network demonstration
+
+Server: Python standard library, loopback-only, automatic port fallback.
+Front end: index.html, app.js, network.js, styles; Three.js local vendor files.
+Details: model-bridge.js loads models/blender/manifest.json and GLBs; original procedural geometry remains fallback.
+Materials: realism.js loads local textures/HDRI/tree cards. No Blender installation is needed for viewing.
+Optional SUMO: server.py starts a separately configured licensed Python/DTT interpreter; no commercial model is shipped.
+Runtime is demonstration-grade, uncalibrated, without real PLC execution or persistent operational audit.

@@ -1,0 +1,52 @@
+{
+  "browser-result": {
+    "passed": true,
+    "result": [
+      {
+        "route": "overview",
+        "meshes": 2998,
+        "heightDrift": 0
+      },
+      {
+        "route": "oxidation",
+        "meshes": 2326,
+        "heightDrift": 0
+      },
+      {
+        "route": "network",
+        "meshes": 955,
+        "heightDrift": 0
+      }
+    ],
+    "errors": [],
+    "bad": [],
+    "external": [],
+    "fullscreen": true
+  },
+  "interaction": [
+    {
+      "scene": "overview",
+      "api": 200,
+      "samples": 25,
+      "runEntersFullscreen": true
+    },
+    {
+      "scene": "oxidation",
+      "api": 200,
+      "samples": 25,
+      "runEntersFullscreen": true
+    },
+    {
+      "scene": "network",
+      "runEntersFullscreen": true
+    }
+  ],
+  "relocation": {
+    "chinese_and_space_path": true,
+    "empty_python_path_environment": true,
+    "relative_runtime_only": true,
+    "port_fallback": true,
+    "a2o_and_oxidation_api": true,
+    "clean_vm_tested": false
+  }
+}

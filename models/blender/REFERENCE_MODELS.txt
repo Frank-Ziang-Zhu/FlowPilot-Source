@@ -1,0 +1,4 @@
+reference/overview.glb、oxidation.glb、network.glb 是从原三维场景实际导出的静态模型快照，方便在新电脑 Blender 中直接打开和精修。
+
+网页仍默认使用 app.js/network.js 的程序化模型，保留水流、气泡、旋转设备等原始动画。
+GLB 快照不包含原 JS 动画逻辑、文字 Sprite 和灯光。不要将完整快照直接叠加到原场景造成重复；按 blender/WORKFLOW.md 将精修后的单元或细节分批接入。

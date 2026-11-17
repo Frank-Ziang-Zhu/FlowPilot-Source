@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+*.blend1
+.venv/
+runtime/
+dist/
+*.zip
+*.log
+.DS_Store
+.env

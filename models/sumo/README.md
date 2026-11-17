@@ -1,0 +1,7 @@
+# 可选SUMO适配器
+
+默认ASM演示不需要本目录中的任何商业模型。
+
+公开发行不附带原厂示例工程或其内嵌二进制。若需要SUMO，请自行取得合法SUMO 22与Dynamita DTT许可及对应Python环境，准备兼容的模型与TSV数据，在config.json填写sumo_python、sumo_pythonpath和sumo_project_root（指向包含examples-22的目录）。当前适配器寻找examples-22/Python example.sumo。
+
+server.py的RUNNER_SOURCE目前映射CSTR2曝气、CSTR3容积、Sideflowdivider侧流，并输出CSTR3的SNHx/SNOx。不同模型需要修改变量映射；不是放入任意.sumo即可使用。未配置独立氧化沟模型时不能将A²O示例视为氧化沟实算结果。界面检测可用不等于已通过许可和计算验证。

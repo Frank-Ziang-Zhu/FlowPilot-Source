@@ -1,0 +1,10 @@
+{
+  "scene": "oxidation",
+  "blender": "5.2.2 LTS",
+  "detail_assemblies": 23,
+  "detail_polygons": 11904,
+  "reference_objects": 2379,
+  "coordinate_system": "meters, Three Y up -> Blender Z up",
+  "export": "detail overlay only; original animations stay in JS",
+  "asset_ids": "demo identifiers, not live SCADA bindings"
+}

@@ -1,0 +1,36 @@
+/* Readable default browser view; retain the sidebar and normal browser chrome. */
+body:not(.native-fullscreen){--presentation-text:16px;--presentation-label:20px}
+body:not(.native-fullscreen) :is(span,small,label,time,em,b,summary,p,button,input,select,textarea,li,td,th,legend,output){font-size:max(16px,1em)}
+body:not(.native-fullscreen) :is(.scene-tags strong,.ox-scene-pin strong,.network-scene-pin strong){font-size:20px;line-height:1.4;white-space:normal;overflow:visible}
+body:not(.native-fullscreen) .scene-tags small{font-size:16px;line-height:1.5;white-space:normal;overflow:visible;color:#b1cad5}
+body:not(.native-fullscreen) .scene-tags{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+body:not(.native-fullscreen) .scene-tags button{display:block!important;padding:10px;min-height:82px}
+body:not(.native-fullscreen) :is(.ox-scene-pin,.network-scene-pin){min-width:190px;padding:10px 14px 10px 21px}
+body:not(.native-fullscreen) :is(.process-switch button,.camera-switch button,.stage-tool){font-size:16px;min-height:40px;height:auto}
+body:not(.native-fullscreen) .stage-head{flex-wrap:wrap;min-height:66px;gap:12px}
+body:not(.native-fullscreen) .stage-actions{flex-wrap:wrap}
+body:not(.native-fullscreen) :is(.page-kicker,.eyebrow,.sync-state,.stage-status,.live-badge,.agent-ready,.quality-control,.quality-control select,#inspectDetails,.fullscreen-toggle){font-size:16px}
+body:not(.native-fullscreen) :is(.unit-detail,.network-unit-detail){gap:12px;min-height:100px;grid-template-columns:minmax(180px,1fr) auto}
+body:not(.native-fullscreen) :is(.unit-detail,.network-unit-detail)>small{display:block;grid-column:1/-1;text-align:left;font-size:16px;line-height:1.5}
+body:not(.native-fullscreen) :is(.unit-detail strong,.network-unit-detail strong){font-size:20px}
+body:not(.native-fullscreen) .rail-metrics strong{font-size:28px}
+body:not(.native-fullscreen) .rail-metrics em{position:static;display:block;margin-top:4px}
+body:not(.native-fullscreen) :is(.panel-head h3,.next-action h3){font-size:22px;line-height:1.5}
+body:not(.native-fullscreen) :is(.next-action p,.network-action p,.result-provenance,.network-evidence){font-size:16px;line-height:1.6}
+body:not(.native-fullscreen) :is(.scene-top-readout,.network-legend){font-size:16px;line-height:1.5;background:rgba(4,20,30,.74);padding:6px 10px;border-radius:4px;color:#d2e5eb;flex-wrap:wrap}
+body:not(.native-fullscreen) .network-legend{top:62px}
+body:not(.native-fullscreen) .sidebar{overflow-y:auto}
+body:not(.native-fullscreen) .sidebar>:is(.brand,.plant-card,.main-nav,.engine-state,.profile){flex-shrink:0}
+body:not(.native-fullscreen) :is(.brand small,.plant-card small,.engine-state small,.profile small){line-height:1.5}
+body:not(.native-fullscreen) .brand small{font-size:16px}
+body:not(.native-fullscreen) :is(.nav-item,.plant-card){height:auto;min-height:47px}
+body:not(.native-fullscreen) :is(.overview-layout,.oxidation-overview,.network-overview){height:auto;min-height:800px;grid-template-columns:minmax(0,1fr) 380px}
+body:not(.native-fullscreen) .scene-wrap{min-height:530px}
+/* An auto-height panel cannot also determine its chart's height by percentage.
+   Repainting the canvas then changes its intrinsic height and grows the grid. */
+body:not(.native-fullscreen) .live-panel canvas{height:clamp(220px,32vh,300px);min-height:0;max-height:300px}
+@media(min-width:1900px){body:not(.native-fullscreen) .scene-tags{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(max-width:1600px){body:not(.native-fullscreen) .top-actions{gap:10px}body:not(.native-fullscreen) .top-actions time{display:none}}
+@media(max-width:1280px){body:not(.native-fullscreen) .sync-state{display:none}body:not(.native-fullscreen) :is(.overview-layout,.oxidation-overview,.network-overview){grid-template-columns:minmax(0,1fr)}body:not(.native-fullscreen) .scene-wrap{height:600px;flex:none}body:not(.native-fullscreen) .overview-rail{grid-template-columns:1fr;grid-template-rows:auto auto auto}body:not(.native-fullscreen) .overview-rail>*{grid-column:auto;grid-row:auto}}
+@media(max-width:1040px){body:not(.native-fullscreen) :is(.unit-detail,.network-unit-detail){grid-template-columns:1fr}body:not(.native-fullscreen) .top-actions{gap:5px}body:not(.native-fullscreen) .topbar{flex-wrap:wrap;height:auto;min-height:88px;padding-top:10px;padding-bottom:10px}}
+@media(max-width:760px){body:not(.native-fullscreen){--presentation-label:18px}body:not(.native-fullscreen) .scene-wrap{height:640px!important;min-height:640px!important}body:not(.native-fullscreen) .scene-tags{grid-template-columns:repeat(2,minmax(0,1fr));left:8px;right:8px;bottom:8px}body:not(.native-fullscreen) .scene-tags strong{font-size:18px}body:not(.native-fullscreen) .scene-tags button{min-height:70px;padding:8px}body:not(.native-fullscreen) .network-tags button{display:block!important}body:not(.native-fullscreen) .quality-control select{width:68px}body:not(.native-fullscreen) .topbar{flex-wrap:nowrap;padding-top:0;padding-bottom:0;min-height:72px}body:not(.native-fullscreen) .page-kicker{display:none}body:not(.native-fullscreen) .topbar h1{font-size:18px}body:not(.native-fullscreen) .scene-top-readout{left:12px;right:12px;gap:8px}body:not(.native-fullscreen) .stage-actions{gap:8px}}

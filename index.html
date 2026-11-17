@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#061827" />
+  <title>FlowPilot | 污水智能决策平台</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23061827'/%3E%3Cpath d='M5 13q5-5 11 0t11 0M5 21q5-5 11 0t11 0' fill='none' stroke='%234ad9d5' stroke-width='3'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css?v=20260728-2" />
+  <link rel="stylesheet" href="network.css?v=20260728-2" />
+  <link rel="stylesheet" href="fullscreen.css?v=20261006-round2" />
+  <link rel="stylesheet" href="readability.css?v=20261006-stable" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#overview" aria-label="FlowPilot 首页">
+        <span class="brand-mark"><i data-lucide="waves"></i></span>
+        <span>FlowPilot<small>智能水厂决策平台</small></span>
+      </a>
+      <button class="plant-card" type="button">
+        <span class="plant-live"></span>
+        <span><strong>江北再生水厂</strong><small>设计规模 2.0 万 m³/d</small></span>
+        <i data-lucide="chevrons-up-down"></i>
+      </button>
+      <nav class="main-nav" aria-label="主导航">
+        <button class="nav-item active" data-route="overview"><i data-lucide="layout-dashboard"></i><span>A²O 主控大屏</span></button>
+        <button class="nav-item" data-route="oxidation"><i data-lucide="waves"></i><span>氧化沟孪生</span><b>3D</b></button>
+        <button class="nav-item" data-route="network"><i data-lucide="waypoints"></i><span>泵站管网孪生</span><b>NEW</b></button>
+        <button class="nav-item" data-route="scenarios"><i data-lucide="git-compare-arrows"></i><span>情景制造</span></button>
+        <button class="nav-item" data-route="advisor"><i data-lucide="sparkles"></i><span>策略智能体</span><b>AI</b></button>
+        <button class="nav-item" data-route="history"><i data-lucide="history"></i><span>运行记录</span></button>
+      </nav>
+      <div class="sidebar-spacer"></div>
+      <div class="engine-state">
+        <label for="engineSelect">计算引擎</label>
+        <select id="engineSelect"><option value="asm">A · 简化 ASM（离线）</option><option value="sumo">B · SUMO 22（需安装）</option></select>
+        <small id="engineStatus">离线机理推演 · 未经实厂校准</small>
+        <small>管网为假设诊断演示 · 不连接 PLC</small>
+        <details><summary>Blender 模型接口</summary><button id="exportGlb" type="button" title="导出当前三维场景到 Blender"><i data-lucide="download"></i>导出 GLB</button><small id="modelStatus">原始程序化建模已保留</small></details>
+      </div>
+      <div class="profile"><span class="avatar">Z</span><span><strong>Ziang Zhu</strong><small>工艺工程师</small></span><button class="icon-button dark" aria-label="账户菜单"><i data-lucide="more-horizontal"></i></button></div>
+    </aside>
+
+    <header class="topbar">
+      <div><span class="page-kicker" id="pageKicker">DIGITAL TWIN</span><h1 id="pageTitle">主控大屏</h1></div>
+      <div class="top-actions">
+        <span class="sync-state"><i></i><span id="syncText">演示数据 · 未接现场</span></span>
+        <time id="clock">--:--:--</time>
+        <button class="primary-button" id="globalRun" aria-label="运行数字孪生"><i data-lucide="play"></i><span id="globalRunLabel">运行数字孪生</span></button>
+      </div>
+    </header>
+
+    <main>
+      <section class="view active" data-view="overview" aria-labelledby="pageTitle">
+        <div class="overview-layout">
+          <article class="twin-stage">
+            <div class="stage-head">
+              <div><span class="eyebrow">DEMO DIGITAL TWIN · A²O PROCESS</span><h2>全厂工艺数字孪生</h2></div>
+              <div class="stage-actions">
+                <div class="process-switch" aria-label="切换三维工艺">
+                  <button class="active" data-route-link="overview">A²O</button>
+                  <button data-route-link="oxidation">氧化沟</button>
+                  <button data-route-link="network">泵站管网</button>
+                </div>
+                <div class="camera-switch" aria-label="三维视角">
+                  <button class="active" data-camera="isometric" aria-label="全厂视角"><i data-lucide="factory"></i><span>全厂</span></button>
+                  <button data-camera="process" aria-label="工艺视角"><i data-lucide="route"></i><span>工艺</span></button>
+                  <button data-camera="pipe" aria-label="管网视角"><i data-lucide="git-branch"></i><span>管网</span></button>
+                  <button data-camera="bird" aria-label="鸟瞰视角"><i data-lucide="scan"></i><span>鸟瞰</span></button>
+                </div>
+                <span class="stage-status"><i></i><span id="simulationState">正常运行</span></span>
+              </div>
+            </div>
+
+            <div class="scene-wrap" id="sceneWrap">
+              <div id="plant3d" aria-label="包含预处理、双线 A2O 生化池、鼓风机房、二沉池、加药间和出水渠的三维污水厂数字孪生"></div>
+              <div class="scene-vignette"></div>
+              <div class="scene-top-readout">
+                <span>场景 <b>夏季高负荷</b></span>
+                <span>模拟时钟 <b id="simHour">08:00</b></span>
+                <span>数据延迟 <b>1.2 s</b></span>
+              </div>
+              <div class="network-legend">
+                <span><i class="water-line"></i>工艺水</span>
+                <span><i class="air-line"></i>曝气管</span>
+                <span><i class="sludge-line"></i>污泥回流</span>
+              </div>
+              <div class="scene-tags" aria-label="工艺单元选择">
+                <button data-unit="headworks"><strong>01 预处理</strong><small>格栅 · 沉砂 · 提升</small></button>
+                <button data-unit="anaerobic"><strong>02 厌氧 / 缺氧</strong><small>双线脱氮除磷</small></button>
+                <button class="selected" data-unit="aerobic"><strong>03 好氧池</strong><small>DO 1.84 mg/L</small></button>
+                <button data-unit="clarifier"><strong>04 二沉池</strong><small>泥位 2.13 m</small></button>
+                <button data-unit="utilities"><strong>05 鼓风 / 加药</strong><small>4 台风机 · 3 用 1 备</small></button>
+                <button data-unit="outlet"><strong>06 深度处理</strong><small>NH₄-N 1.86 mg/L</small></button>
+              </div>
+            </div>
+
+            <div class="unit-detail">
+              <div><span id="unitName">好氧池 · 当前控制单元</span><strong id="unitAdvice">低曝气运行，氨氮仍在安全区间</strong></div>
+              <div class="unit-telemetry" id="unitTelemetry">
+                <span><small>DO</small><b>1.84 mg/L</b></span>
+                <span><small>气水比</small><b>4.6 : 1</b></span>
+                <span><small>设备</small><b>12 / 12</b></span>
+              </div>
+              <small id="unitMeta">气水比稳定 · 无需人工干预</small>
+            </div>
+          </article>
+
+          <aside class="overview-rail">
+            <div class="rail-metrics">
+              <article><span>进水流量</span><strong id="flowMetric">896</strong><small>m³/h</small><em>正常</em></article>
+              <article><span>出水氨氮</span><strong id="nhMetric">1.86</strong><small>mg/L</small><em>达标</em></article>
+              <article><span>曝气单耗</span><strong id="energyMetric">0.287</strong><small>kWh/m³</small><em>-8.2%</em></article>
+            </div>
+            <article class="live-panel">
+              <div class="panel-head"><div><span class="eyebrow">24 H PROCESS TREND</span><h3>流量与出水氨氮</h3></div><span class="live-badge"><i></i>模拟</span></div>
+              <canvas id="liveChart" aria-label="24 小时进水流量与出水氨氮动态趋势"></canvas>
+              <div class="chart-legend"><span><i class="cyan"></i>进水流量</span><span><i class="lime"></i>出水 NH₄-N</span></div>
+            </article>
+            <article class="next-action">
+              <div class="action-priority"><span class="eyebrow">AGENT NEXT ACTION</span><b>低风险</b></div>
+              <h3 id="overviewActionTitle">保持方案 B，不加风</h3>
+              <p id="overviewActionCopy">当前负荷下继续低曝气运行；14:00 后重点看二沉池泥位。</p>
+              <button class="text-link" data-route-link="advisor">查看完整策略 <i data-lucide="arrow-right"></i></button>
+            </article>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" data-view="oxidation" aria-label="Carrousel 氧化沟数字孪生">
+        <div class="overview-layout oxidation-overview">
+          <article class="twin-stage">
+            <div class="stage-head">
+              <div><span class="eyebrow">CARROUSEL OXIDATION DITCH · LIVE TWIN</span><h2>Carrousel 氧化沟数字孪生</h2></div>
+              <div class="stage-actions">
+                <div class="process-switch" aria-label="切换三维工艺">
+                  <button data-route-link="overview">A²O</button>
+                  <button class="active" data-route-link="oxidation">氧化沟</button>
+                  <button data-route-link="network">泵站管网</button>
+                </div>
+                <div class="camera-switch" aria-label="氧化沟三维视角">
+                  <button class="active" data-ox-camera="isometric" aria-label="氧化沟全厂视角" title="全厂视角"><i data-lucide="factory"></i><span>全厂</span></button>
+                  <button data-ox-camera="ditch" aria-label="氧化沟近景" title="双沟近景"><i data-lucide="refresh-cw"></i><span>双沟</span></button>
+                  <button data-ox-camera="clarifier" aria-label="沉淀区视角" title="沉淀区视角"><i data-lucide="circle-dot"></i><span>沉淀</span></button>
+                  <button data-ox-camera="bird" aria-label="氧化沟鸟瞰视角" title="鸟瞰视角"><i data-lucide="scan"></i><span>鸟瞰</span></button>
+                </div>
+                <button class="stage-tool" id="oxTourToggle" aria-label="开启氧化沟自动巡航" title="自动巡航"><i data-lucide="play-circle"></i><span>巡航</span></button>
+                <button class="stage-tool presentation-tool" id="oxPresentationEnter" aria-label="进入沉浸演示模式" title="沉浸演示"><i data-lucide="maximize-2"></i><span>演示</span></button>
+                <span class="stage-status"><i></i><span id="oxidationSimulationState">环流稳定</span></span>
+              </div>
+            </div>
+
+            <div class="scene-wrap oxidation-scene" id="oxidationSceneWrap">
+              <div id="oxidation3d" aria-label="包含预处理、选择池、两座 Carrousel 氧化沟、三座二沉池、回流污泥泵房、鼓风机房和深度处理区的三维污水厂数字孪生"></div>
+              <div class="scene-vignette"></div>
+              <div class="scene-top-readout">
+                <span>场景 <b>雨后恢复期</b></span>
+                <span>模拟时钟 <b id="oxSimHour">08:00</b></span>
+                <span>沟内流速 <b id="oxVelocity">0.31 m/s</b></span>
+              </div>
+              <div class="ox-presentation-hud">
+                <div class="ox-hud-brand">
+                  <span class="ox-hud-mark"><i data-lucide="waves"></i></span>
+                  <div><small>FLOWPILOT · WATER INTELLIGENCE</small><strong>Carrousel 氧化沟数字孪生</strong></div>
+                  <span class="ox-hud-live"><i></i> LIVE</span>
+                </div>
+                <div class="ox-hud-metrics" aria-label="氧化沟实时核心指标">
+                  <span><small>进水流量</small><strong id="oxHudFlow">824</strong><em>m³/h</em></span>
+                  <span><small>沟末 DO</small><strong id="oxHudDo">1.72</strong><em>mg/L</em></span>
+                  <span><small>环流速度</small><strong id="oxHudVelocity">0.31</strong><em>m/s</em></span>
+                  <span><small>出水 NH₄-N</small><strong id="oxHudNh4">1.21</strong><em>mg/L</em></span>
+                </div>
+                <div class="ox-hud-controls">
+                  <button id="oxPresentationRun"><i data-lucide="play"></i><span>推演 24 h</span></button>
+                  <button id="oxPresentationTour"><i data-lucide="orbit"></i><span>自动巡航</span></button>
+                  <button class="ox-hud-close" id="oxPresentationExit" aria-label="退出沉浸演示"><i data-lucide="minimize-2"></i></button>
+                </div>
+              </div>
+              <div class="network-legend">
+                <span><i class="water-line"></i>环流方向</span>
+                <span><i class="air-line"></i>微孔曝气</span>
+                <span><i class="sludge-line"></i>污泥回流</span>
+              </div>
+              <div class="ox-scene-pins" id="oxScenePins" aria-label="三维场景实时数据标注">
+                <button class="ox-scene-pin" data-ox-pin="headworks" data-ox-focus="headworks"><i></i><span><small>进水提升</small><strong id="oxPinFlow">824 m³/h</strong></span></button>
+                <button class="ox-scene-pin active" data-ox-pin="ditch" data-ox-focus="ditch"><i></i><span><small>双线氧化沟</small><strong id="oxPinDo">DO 1.72 · 0.31 m/s</strong></span></button>
+                <button class="ox-scene-pin" data-ox-pin="clarifier" data-ox-focus="clarifier"><i></i><span><small>二沉池组</small><strong id="oxPinBlanket">泥位 1.86 m</strong></span></button>
+                <button class="ox-scene-pin" data-ox-pin="outlet" data-ox-focus="outlet"><i></i><span><small>深度处理出水</small><strong id="oxPinOutlet">NH₄-N 1.21 · TN 8.6</strong></span></button>
+              </div>
+              <div class="scene-tags oxidation-tags" aria-label="氧化沟工艺单元选择">
+                <button data-ox-unit="headworks"><strong>01 预处理</strong><small>转鼓格栅 · 旋流沉砂</small></button>
+                <button data-ox-unit="selector"><strong>02 选择 / 配水</strong><small>厌氧选择 · 均匀配水</small></button>
+                <button class="selected" data-ox-unit="ditch"><strong>03 双线氧化沟</strong><small>环流 0.31 m/s · DO 1.72</small></button>
+                <button data-ox-unit="clarifier"><strong>04 二沉池组</strong><small>3 池运行 · 泥位 1.86 m</small></button>
+                <button data-ox-unit="sludge"><strong>05 污泥 / 鼓风</strong><small>回流 76% · 风机 2+1</small></button>
+                <button data-ox-unit="outlet"><strong>06 深度处理</strong><small>滤布滤池 · UV · 回用</small></button>
+              </div>
+            </div>
+
+            <div class="unit-detail oxidation-unit-detail">
+              <div><span id="oxUnitName">双线 Carrousel 氧化沟 · 当前控制单元</span><strong id="oxUnitAdvice">南北沟环流稳定，曝气区与缺氧区边界清晰</strong></div>
+              <div class="unit-telemetry" id="oxUnitTelemetry">
+                <span><small>沟末 DO</small><b>1.72 mg/L</b></span>
+                <span><small>环流速度</small><b>0.31 m/s</b></span>
+                <span><small>表曝设备</small><b>6 / 8</b></span>
+              </div>
+              <small id="oxUnitMeta">北沟 38 Hz · 南沟 42 Hz · 无沉积风险</small>
+            </div>
+          </article>
+
+          <aside class="overview-rail oxidation-rail">
+            <div class="rail-metrics">
+              <article><span>进水流量</span><strong id="oxFlowMetric">824</strong><small>m³/h</small><em>回落</em></article>
+              <article><span>沟末 DO</span><strong id="oxDoMetric">1.72</strong><small>mg/L</small><em>稳定</em></article>
+              <article><span>曝气单耗</span><strong id="oxEnergyMetric">0.264</strong><small>kWh/m³</small><em>-6.7%</em></article>
+            </div>
+            <article class="live-panel oxidation-live-panel">
+              <div class="panel-head"><div><span class="eyebrow">24 H DITCH HYDRAULICS</span><h3>流量与沟末溶氧</h3></div><span class="live-badge"><i></i>模拟</span></div>
+              <canvas id="oxidationLiveChart" aria-label="24 小时氧化沟进水流量与沟末溶氧动态趋势"></canvas>
+              <div class="chart-legend"><span><i class="cyan"></i>进水流量</span><span><i class="lime"></i>沟末 DO</span></div>
+            </article>
+            <article class="next-action oxidation-action">
+              <div class="action-priority"><span class="eyebrow">DITCH CONTROL ACTION</span><b>可执行</b></div>
+              <h3 id="oxActionTitle">北沟转碟降至 38 Hz</h3>
+              <p id="oxActionCopy">流量峰值已回落，南沟保持 42 Hz；北沟分两步降频，并观察末端 DO 不低于 1.5 mg/L。</p>
+              <button class="text-link" data-ox-focus="ditch">聚焦控制单元 <i data-lucide="scan-search"></i></button>
+            </article>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" data-view="network" aria-label="泵站群与污水管网 COD 保质输送数字孪生">
+        <div class="overview-layout network-overview">
+          <article class="twin-stage">
+            <div class="stage-head">
+              <div>
+                <span class="eyebrow">WASTEWATER NETWORK · COD PRESERVATION TWIN</span>
+                <h2>泵站群与管网保质输送数字孪生</h2>
+              </div>
+              <div class="stage-actions">
+                <div class="process-switch" aria-label="切换三维系统">
+                  <button data-route-link="overview">A²O</button>
+                  <button data-route-link="oxidation">氧化沟</button>
+                  <button class="active" data-route-link="network">泵站管网</button>
+                </div>
+                <div class="camera-switch network-camera-switch" aria-label="泵站管网三维视角">
+                  <button class="active" data-network-camera="system" aria-label="全网视角" title="全网视角"><i data-lucide="waypoints"></i><span>全网</span></button>
+                  <button data-network-camera="underground" aria-label="地下管网视角" title="地下管网"><i data-lucide="git-branch"></i><span>地下</span></button>
+                  <button data-network-camera="station-a" aria-label="A 泵站近景" title="A 泵站"><i data-lucide="warehouse"></i><span>A 站</span></button>
+                  <button data-network-camera="risk" aria-label="COD 损失段视角" title="COD 损失段"><i data-lucide="scan-search"></i><span>损失段</span></button>
+                </div>
+                <button class="stage-tool" id="networkTourToggle" aria-label="开启泵站管网自动巡航" title="自动巡航"><i data-lucide="play-circle"></i><span>巡航</span></button>
+                <button class="stage-tool presentation-tool" id="networkPresentationEnter" aria-label="进入泵站管网沉浸演示" title="沉浸演示"><i data-lucide="maximize-2"></i><span>演示</span></button>
+                <span class="stage-status network-stage-status"><i></i><span id="networkSimulationState">当前调度 · COD 持续衰减</span></span>
+              </div>
+            </div>
+
+            <div class="scene-wrap network-scene" id="networkSceneWrap">
+              <div id="network3d" aria-label="包含污水处理厂、A B C D 四座泵站、地下压力管线、重力主干管、阀井和 COD 沿程输送的三维城市污水管网数字孪生"></div>
+              <div class="scene-vignette"></div>
+              <div class="scene-top-readout">
+                <span>调度场景 <b id="networkSceneMode">当前泵站时序</b></span>
+                <span>模型时钟 <b id="networkSimHour">06:00</b></span>
+                <span>水力步长 <b>30 s</b></span>
+              </div>
+
+              <div class="network-presentation-hud">
+                <div class="network-hud-brand">
+                  <span class="network-hud-mark"><i data-lucide="waypoints"></i></span>
+                  <div><small>FLOWPILOT · NETWORK INTELLIGENCE</small><strong>南京泵站群 COD 保质输送孪生</strong></div>
+                  <span class="network-hud-live"><i></i> LIVE</span>
+                </div>
+                <div class="network-hud-metrics" aria-label="泵站管网实时核心指标">
+                  <span><small>B 站源水 COD</small><strong id="networkHudSource">225</strong><em>mg/L</em></span>
+                  <span><small>预测进厂 COD</small><strong id="networkHudPlant">100</strong><em>mg/L</em></span>
+                  <span><small>COD 保留率</small><strong id="networkHudRetention">46</strong><em>%</em></span>
+                  <span><small>等效停留时间</small><strong id="networkHudResidence">6.2</strong><em>h</em></span>
+                </div>
+                <div class="network-hud-controls">
+                  <button id="networkPresentationRun"><i data-lucide="play"></i><span>计算最优调度</span></button>
+                  <button id="networkPresentationTour"><i data-lucide="orbit"></i><span>自动巡航</span></button>
+                  <button class="network-hud-close" id="networkPresentationExit" aria-label="退出沉浸演示"><i data-lucide="minimize-2"></i></button>
+                </div>
+              </div>
+
+              <div class="network-legend network-flow-legend">
+                <span><i class="network-main-line"></i>主干污水</span>
+                <span><i class="network-boost-line"></i>C / D 增压接力</span>
+                <span><i class="network-risk-line"></i>疑似 COD 损失段</span>
+              </div>
+
+              <div class="network-scene-pins" id="networkScenePins" aria-label="泵站与管网实时数据标注">
+                <button class="network-scene-pin plant" data-network-pin="plant" data-network-focus="plant"><i></i><span><small>污水处理厂进水</small><strong id="networkPinPlant">COD 100 mg/L</strong></span></button>
+                <button class="network-scene-pin" data-network-pin="station-a" data-network-focus="station-a"><i></i><span><small>A 枢纽泵站</small><strong id="networkPinA">2 泵 · 43 Hz</strong></span></button>
+                <button class="network-scene-pin" data-network-pin="station-b" data-network-focus="station-b"><i></i><span><small>B 源头泵站</small><strong id="networkPinB">COD 225 · 720 m³/h</strong></span></button>
+                <button class="network-scene-pin boost" data-network-pin="station-c" data-network-focus="station-c"><i></i><span><small>C 接力泵站</small><strong id="networkPinC">待协同 · 36 Hz</strong></span></button>
+                <button class="network-scene-pin boost" data-network-pin="station-d" data-network-focus="station-d"><i></i><span><small>D 增压泵站</small><strong id="networkPinD">待协同 · 42 Hz</strong></span></button>
+                <button class="network-scene-pin risk active" data-network-pin="risk" data-network-focus="risk"><i></i><span><small>B—A 疑似损失核心段</small><strong id="networkPinRisk">低谷流速 0.29 m/s</strong></span></button>
+              </div>
+
+              <div class="scene-tags network-tags" aria-label="泵站与管网单元选择">
+                <button data-network-unit="station-b"><strong>01 B 源头泵站</strong><small>COD 225 · 720 m³/h</small></button>
+                <button data-network-unit="station-d"><strong>02 D 增压泵站</strong><small>2 用 1 备 · 42 Hz</small></button>
+                <button data-network-unit="station-c"><strong>03 C 接力泵站</strong><small>1 用 1 备 · 36 Hz</small></button>
+                <button data-network-unit="risk" class="selected"><strong>04 B—A 损失段</strong><small>6.4 km · 0.29 m/s</small></button>
+                <button data-network-unit="station-a"><strong>05 A 枢纽泵站</strong><small>汇流接收 · 43 Hz</small></button>
+                <button data-network-unit="plant"><strong>06 污水处理厂</strong><small>进厂 COD 100 mg/L</small></button>
+              </div>
+            </div>
+
+            <div class="unit-detail network-unit-detail">
+              <div><span id="networkUnitName">B—A 主干管疑似损失段 · 当前诊断对象</span><strong id="networkUnitAdvice">高功率不等于高输送效率，先验证低谷期停留与泵站错峰</strong></div>
+              <div class="unit-telemetry" id="networkUnitTelemetry">
+                <span><small>沿程长度</small><b>6.4 km</b></span>
+                <span><small>低谷流速</small><b>0.29 m/s</b></span>
+                <span><small>COD 损失</small><b>约 125 mg/L</b></span>
+              </div>
+              <small id="networkUnitMeta">模型初判 · 需用流量、液位与在线 COD 时序校核</small>
+            </div>
+          </article>
+
+          <aside class="overview-rail network-rail">
+            <div class="rail-metrics">
+              <article><span>进厂 COD</span><strong id="networkPlantCodMetric">100</strong><small>mg/L</small><em id="networkPlantCodState">偏低</em></article>
+              <article><span>COD 保留率</span><strong id="networkRetentionMetric">46</strong><small>%</small><em id="networkRetentionState">损失 54%</em></article>
+              <article><span>等效停留时间</span><strong id="networkResidenceMetric">6.2</strong><small>h</small><em id="networkResidenceState">过长</em></article>
+            </div>
+
+            <article class="network-control-panel">
+              <div class="panel-head">
+                <div><span class="eyebrow">COD DELIVERY OPTIMIZER</span><h3>输入边界，计算泵站开合</h3></div>
+                <div class="network-mode-switch" aria-label="切换当前和智能调度视图">
+                  <button class="active" data-network-mode="baseline">当前</button>
+                  <button data-network-mode="optimized">智能调度</button>
+                </div>
+              </div>
+              <div class="network-input-grid">
+                <label>B 站源水 COD<input id="networkSourceCod" type="number" min="100" max="500" step="5" value="225" /><span>mg/L</span></label>
+                <label>A 站 COD（输入）<input id="networkObservedCod" type="number" min="40" max="450" step="5" value="100" /><span>mg/L</span></label>
+                <label>目标进厂 COD<input id="networkTargetCod" type="number" min="80" max="350" step="5" value="200" /><span>mg/L</span></label>
+                <label>B 站来水流量 <output id="networkFlowOutput">720 m³/h</output><input id="networkFlow" type="range" min="300" max="1400" step="20" value="720" /></label>
+                <label>等效输送距离 <output id="networkLengthOutput">8.6 km</output><input id="networkLength" type="range" min="3" max="16" step="0.2" value="8.6" /></label>
+              </div>
+              <details class="network-evidence"><summary>诊断证据与质量通量</summary><p id="networkMassFlux"></p><p>概念拓扑：B→A→污水厂；C/D 汇入主线。D→厂旁路待客户核实。当前主线图不是实测拓扑。</p><p>COD 由约 200 降至约 100 mg/L 的原因待查：同时核对混合/稀释、停留、生物消耗、沉积/再悬浮、监测偏差、支路来源和采样时差。</p><p>布点：B 出站、C/D 支路、A 汇流井和进厂端，同步记录 Q、COD、电导率、液位/压力及启停；按停留时间对齐水样，闭合支路质量平衡。当前无重复样本和仪表误差数据，统计可信区间尚不能估计。</p></details>
+              <button class="primary-button network-run-button" id="networkRunLocal"><i data-lucide="play"></i><span>推演候选泵组时序</span></button>
+              <div class="network-chart-head"><span>假设模型 · COD 剖面</span><b id="networkChartReadout">B 225 → 厂 100 mg/L</b></div>
+              <canvas id="networkCodChart" aria-label="当前调度和智能调度下从 B 泵站到污水处理厂的 COD 沿程变化对比"></canvas>
+              <div class="chart-legend network-chart-legend"><span><i class="network-chart-baseline"></i>当前调度</span><span><i class="network-chart-optimized"></i>智能调度</span><span><i class="limit"></i>目标 COD</span></div>
+            </article>
+
+            <article class="next-action network-action">
+              <div class="action-priority"><span class="eyebrow">ENGINEER ACTION</span><b id="networkActionBadge">模型初判</b></div>
+              <h3 id="networkActionTitle">先查时序，不要继续盲目加功率</h3>
+              <p id="networkActionCopy">重点核对 B、C、D、A 四站 1 分钟级液位与启停记录，确认 B—A 段是否存在长时间低流速和泵站错峰。</p>
+              <div class="network-dispatch" id="networkDispatch">
+                <span><b>B</b><small>连续输送</small></span><i></i>
+                <span><b>D</b><small>先启</small></span><i></i>
+                <span><b>C</b><small>+18 min</small></span><i></i>
+                <span><b>A</b><small>+35 min</small></span>
+              </div>
+            </article>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" data-view="scenarios" aria-label="情景制造">
+        <div class="view-heading">
+          <div><span class="eyebrow">SCENARIO STUDIO</span><h2>制造工况，立即看两种策略怎么跑</h2><p>只填现场最熟悉的四项数据，动态图会立刻给出结果。</p></div>
+          <span class="dirty-state optional-content" id="scenarioDirty"><i></i>使用上次计算结果</span>
+        </div>
+
+        <article class="constraint-panel">
+          <div class="constraint-title"><span><i data-lucide="sliders-horizontal"></i></span><div><strong>本次工况</strong><small>输入后点击运行，先看动态结果，再看现场动作</small></div><b class="optional-content" id="constraintHealth">6 / 6 已就绪</b><button class="primary-button local-run-button" id="scenarioRunLocal" data-idle-label="运行情景对照"><i data-lucide="play"></i><span>运行情景对照</span></button></div>
+          <div class="constraint-grid">
+            <label>工况模板<select id="conditionPreset"><option value="normal">正常工作日</option><option value="peak" selected>夏季高负荷</option><option value="rain">降雨冲击</option><option value="lowtemp">冬季低温</option></select></label>
+            <label>进水峰值 <output id="inflowPeakOutput">1,050 m³/h</output><input id="inflowPeak" type="range" min="700" max="1400" value="1050" step="10" /></label>
+            <label>进水 NH₄-N<input id="influentNh" type="number" min="15" max="55" value="32" step="1" /><span>mg/L</span></label>
+            <label>出水 NH₄-N 红线<input id="effluentLimit" type="number" min="1" max="8" value="5.0" step="0.1" /><span>mg/L</span></label>
+            <label class="optional-field">水温 <output id="waterTempOutput">24 ℃</output><input id="waterTemp" type="range" min="10" max="32" value="24" step="1" /></label>
+            <label class="optional-field">曝气单耗上限<input id="energyCap" type="number" min="0.18" max="0.55" value="0.32" step="0.01" /><span>kWh/m³</span></label>
+          </div>
+        </article>
+
+        <div class="run-progress" id="scenarioProgress" aria-live="polite">
+          <div class="progress-summary"><span class="progress-icon"><i data-lucide="cpu"></i></span><div><strong id="scenarioProgressTitle">动态图待命</strong><small id="scenarioProgressDetail">点击“运行情景对照”，曲线将立即开始推进</small></div><b id="scenarioProgressPercent">0%</b></div>
+          <div class="progress-track"><i id="scenarioProgressBar"></i></div>
+          <div class="progress-steps"><span class="active">边界校验</span><span>机理求解</span><span>风险扫描</span><span>建议生成</span></div>
+        </div>
+
+        <div class="scenario-pair">
+          <article class="scenario-plan plan-a">
+            <div class="plan-head"><span class="plan-letter">A</span><div><small>现场基线</small><h3>稳定运行策略</h3></div><span class="plan-state">对照</span></div>
+            <div class="mini-process optional-content"><span>进水</span><i></i><span>缺氧</span><i></i><span>好氧</span><i></i><span>沉淀</span><i></i><span>出水</span></div>
+            <div class="control-grid">
+              <label>曝气量 <output id="baseAirOutput">3,200 Nm³/h</output><input id="baseAir" type="range" min="0" max="5000" value="3200" step="100" /></label>
+              <label>侧流泵送 <output id="basePumpOutput">72,000 L/d</output><input id="basePump" type="range" min="40000" max="90000" value="72000" step="1000" /></label>
+              <label class="optional-field">有效容积 <output id="baseVolumeOutput">7,000 m³</output><input id="baseVolume" type="range" min="4000" max="9000" value="7000" step="100" /></label>
+            </div>
+            <div class="plan-result"><span><small>峰值 NH₄-N</small><strong id="basePeakNh">5.12</strong><em>mg/L</em></span><span><small>预计单耗</small><strong id="baseEnergy">0.313</strong><em>kWh/m³</em></span><span class="optional-metric"><small>达标时长</small><strong id="baseCompliance">95.8</strong><em>%</em></span></div>
+          </article>
+
+          <div class="versus"><span>VS</span><i></i></div>
+
+          <article class="scenario-plan plan-b">
+            <div class="plan-head"><span class="plan-letter">B</span><div><small>智能体候选</small><h3>协同节能策略</h3></div><span class="plan-state recommended">推荐</span></div>
+            <div class="mini-process active optional-content"><span>进水</span><i></i><span>缺氧</span><i></i><span>好氧</span><i></i><span>沉淀</span><i></i><span>出水</span></div>
+            <div class="control-grid">
+              <label>曝气量 <output id="optAirOutput">2,700 Nm³/h</output><input id="optAir" type="range" min="0" max="5000" value="2700" step="100" /></label>
+              <label>侧流泵送 <output id="optPumpOutput">64,000 L/d</output><input id="optPump" type="range" min="40000" max="90000" value="64000" step="1000" /></label>
+              <label class="optional-field">有效容积 <output id="optVolumeOutput">7,000 m³</output><input id="optVolume" type="range" min="4000" max="9000" value="7000" step="100" /></label>
+            </div>
+            <div class="plan-result"><span><small>峰值 NH₄-N</small><strong id="scenarioNh">2.47</strong><em>mg/L</em></span><span><small>预计单耗</small><strong id="scenarioEnergy">0.287</strong><em>kWh/m³</em></span><span class="optional-metric"><small>达标时长</small><strong id="scenarioCompliance">100</strong><em>%</em></span></div>
+          </article>
+        </div>
+
+        <article class="comparison-panel">
+          <div class="panel-head">
+            <div><span class="eyebrow">DYNAMIC RESPONSE · 24 H</span><h3>出水氨氮动态响应</h3></div>
+            <div class="chart-readout"><span>仿真时刻 <b id="compareTime">23:00</b></span><span>A <b id="compareAValue">2.71</b></span><span>B <b id="compareBValue">1.86</b></span></div>
+          </div>
+          <div class="chart-shell"><canvas id="compareChart" aria-label="方案 A 与方案 B 的 24 小时出水氨氮动态响应对比"></canvas><div class="chart-state" id="compareChartState"><i data-lucide="circle-check"></i><span>上次仿真已完成</span></div></div>
+          <div class="chart-footer"><div class="chart-legend"><span><i class="steel"></i>方案 A</span><span><i class="lime"></i>方案 B</span><span><i class="limit"></i>出水红线</span></div><span class="optional-content" id="modelStamp">演示预览 · 24 h · 输入为界面示例</span></div>
+        </article>
+
+        <section class="run-advice" aria-label="运行建议">
+          <div class="section-title"><span class="eyebrow">ENGINEER ACTIONS</span><h3>现场该怎么做</h3></div>
+          <div class="advice-grid">
+            <article><span class="advice-index">01</span><div><small>立即调整</small><h3 id="scenarioAdvice1">曝气量降至 2,700 Nm³/h</h3><p id="scenarioAdviceCopy1">侧流同步设为 64,000 L/d，分两次完成，间隔 20 分钟。</p></div><i data-lucide="gauge"></i></article>
+            <article><span class="advice-index">02</span><div><small>重点观察</small><h3 id="scenarioAdvice2">14:00–18:00 看二沉池泥位</h3><p id="scenarioAdviceCopy2">NH₄-N 小于 3.0 mg/L 且泥位低于 2.8 m，就保持方案 B。</p></div><i data-lucide="scan-eye"></i></article>
+            <article><span class="advice-index warning">03</span><div><small>退出条件</small><h3 id="scenarioAdvice3">流量超过 1,176 m³/h 时退出</h3><p id="scenarioAdviceCopy3">先恢复基线曝气，再重新运行高负荷情景。</p></div><i data-lucide="shield-alert"></i></article>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" data-view="advisor" aria-label="策略智能体">
+        <div class="view-heading advisor-heading">
+          <div><span class="eyebrow">STRATEGY AGENT</span><h2>选择目标，让智能体给出今天的操作策略</h2><p>点击生成，对比基线与一个规则候选；操作建议需经现场复核。</p></div>
+          <div class="mode-switch"><button class="active" data-advisor-mode="engineer">工程师视角</button><button data-advisor-mode="manager">厂长视角</button></div>
+        </div>
+
+        <div class="agent-workbench">
+          <article class="agent-constraints">
+            <div class="panel-head"><div><span class="eyebrow">OPTIMIZATION BOUNDARY</span><h3>策略约束</h3></div><span class="agent-ready"><i></i>可求解</span></div>
+            <fieldset class="objective-switch"><legend>优化目标</legend><button class="active" data-objective="balance"><i data-lucide="scale"></i>均衡</button><button data-objective="compliance"><i data-lucide="shield-check"></i>合规</button><button data-objective="energy"><i data-lucide="zap"></i>节能</button></fieldset>
+            <div class="agent-field-grid">
+              <label>风险偏好<select id="riskLevel"><option value="conservative">保守</option><option value="standard" selected>标准</option><option value="progressive">进取</option></select></label>
+              <label class="optional-field">电价<input id="energyPrice" type="number" min="0.3" max="1.8" value="0.78" step="0.01" /><span>元/kWh</span></label>
+            </div>
+            <label class="range-field">单次动作幅度上限 <output id="actionLimitOutput">15%</output><input id="actionLimit" type="range" min="5" max="30" value="15" step="1" /></label>
+            <div class="lock-list optional-content"><label><input id="lockDo" type="checkbox" checked /><span><b>锁定最低 DO</b><small>不低于 1.4 mg/L</small></span></label><label><input id="lockSludge" type="checkbox" checked /><span><b>锁定泥龄窗口</b><small>维持 14–18 d</small></span></label><label><input id="lockStandby" type="checkbox" /><span><b>禁止启动备用风机</b><small>保持 3 用 1 备</small></span></label></div>
+            <div class="constraint-note"><i data-lucide="shield-check"></i><span><strong id="agentBoundaryTitle">5 项约束已锁定</strong><small id="agentBoundaryCopy">对比基线与一个规则候选，尚未实厂校准</small></span></div>
+          </article>
+
+          <article class="agent-chart-panel">
+            <div class="panel-head"><div><span class="eyebrow">AGENT SEARCH TRACE</span><h3>规则候选对照与 24 小时预测</h3></div><div class="panel-actions"><span class="search-generation" id="searchGeneration">基线 + 1 规则候选</span><button class="primary-button local-run-button" id="advisorRunLocal" data-idle-label="生成今日策略"><i data-lucide="sparkles"></i><span>生成今日策略</span></button></div></div>
+            <div class="agent-chart-shell"><canvas id="agentChart" aria-label="智能体策略搜索后的氨氮预测与累计节能动态曲线"></canvas><div class="agent-chart-overlay" id="agentChartOverlay"><span>演示候选</span><strong>方案 B-17</strong><small>合规 98.7 · 节能 8.2%</small></div></div>
+            <div class="chart-footer"><div class="chart-legend"><span><i class="steel"></i>基线 NH₄-N</span><span><i class="lime"></i>策略预测</span><span><i class="cyan"></i>累计节电</span></div><span class="optional-content" id="agentModelStamp">演示预览 + 规则候选 · 未校准</span></div>
+          </article>
+        </div>
+
+        <div class="agent-progress" id="agentProgress" aria-live="polite"><span><i data-lucide="sparkles"></i></span><div><strong id="agentProgressTitle">智能体待命</strong><small id="agentProgressDetail">点击“生成今日策略”，搜索曲线会立即启动</small></div><div class="agent-progress-line"><i id="agentProgressBar"></i></div><b id="agentProgressPercent">0%</b></div>
+
+        <div class="advisor-layout">
+          <article class="recommendation-main">
+            <div class="recommendation-top"><span class="recommendation-icon"><i data-lucide="sparkles"></i></span><div><span>本轮首选策略</span><h3 id="recommendationTitle">方案 B-17 · 低曝气 + 侧流协同</h3></div><div class="confidence"><strong id="confidenceValue">待校准</strong><small>可信度</small></div></div>
+            <p class="recommendation-copy" id="recommendationCopy">在当前边界下，不需要启动备用风机。将曝气量分两步降至 2,700 Nm³/h，同时维持侧流 64,000 L/d，可在稳定出水的同时减少约 8.2% 曝气能耗。</p>
+            <div class="recommendation-impact"><span><small id="impactLabel1">峰值 NH₄-N</small><strong id="impactValue1">2.47 mg/L</strong></span><span><small id="impactLabel2">预计节电</small><strong id="impactValue2">1,248 kWh/d</strong></span><span><small id="impactLabel3">越界风险</small><strong id="impactValue3">低 · 1.3%</strong></span></div>
+            <button class="primary-button wide" id="applyRecommendation"><i data-lucide="check-circle-2"></i>保存到演示值班清单</button>
+          </article>
+          <div class="action-timeline" id="engineerTimeline">
+            <article><span>01</span><div><small>0–20 min</small><h3 id="agentAction1">先将曝气降到 2,900 Nm³/h</h3><p>观察 DO 下降速度，20 分钟内不低于 1.6 mg/L。</p></div><em>立即</em></article>
+            <article><span>02</span><div><small>20–60 min</small><h3 id="agentAction2">再降到 2,700 Nm³/h</h3><p>侧流同步设为 64,000 L/d，避免一次性大幅动作。</p></div><em>跟进</em></article>
+            <article><span>03</span><div><small>现场退出条件</small><h3 id="agentAction3">NH₄-N 超过 4.5 mg/L 即回退</h3><p>由值班工程师确认后恢复基线曝气；平台不下发 PLC。</p></div><em class="warning">触发</em></article>
+          </div>
+          <div class="manager-summary" id="managerSummary" hidden>
+            <article><span>今日可节约</span><strong id="managerSaving">约 1,248 kWh</strong><small id="managerSavingMoney">约 973 元电费</small></article>
+            <article><span>合规把握</span><strong id="managerCompliance">98.7%</strong><small>满足当前出水红线</small></article>
+            <article><span>最大风险</span><strong id="managerRisk">下午负荷叠加</strong><small>退出条件需由现场执行</small></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="history" aria-label="运行记录">
+        <div class="view-heading"><div><span class="eyebrow">RUN REPLAY</span><h2>选择一次运行，动态复盘当时发生了什么</h2><p>初始记录为演示数据，点击后从 00:00 播放到 23:00；本页未持久化归档。</p></div><button class="secondary-button" id="exportHistory" hidden><i data-lucide="download"></i>导出 CSV</button></div>
+        <div class="history-layout">
+          <div class="history-list" id="historyList">
+            <div class="history-row header"><span>运行时间</span><span>工况</span><span>采用策略</span><span>状态</span></div>
+            <button class="history-row selected" data-run="0"><span>今天 10:42</span><span>夏季高负荷</span><span>方案 B-17 · 协同节能</span><span><b class="status-pill adopted">已采用</b></span></button>
+            <button class="history-row" data-run="1"><span>昨天 16:18</span><span>午后峰值</span><span>方案 A · 稳定基线</span><span><b class="status-pill">已完成</b></span></button>
+            <button class="history-row" data-run="2"><span>07-09 09:30</span><span>正常负荷</span><span>方案 B-09 · 负荷跟随</span><span><b class="status-pill adopted">已采用</b></span></button>
+            <button class="history-row" data-run="3"><span>07-08 14:05</span><span>降雨冲击</span><span>保守模式</span><span><b class="status-pill">已完成</b></span></button>
+          </div>
+          <aside class="history-detail">
+            <div class="panel-head"><div><span class="eyebrow">DYNAMIC REPLAY</span><h3 id="historyDetailTitle">方案 B-17 · 夏季高负荷</h3></div><div class="panel-actions"><span class="status-pill adopted" id="historyDetailState">已采用</span><button class="icon-button replay-button" id="replayRun" aria-label="重新播放动态曲线" title="重新播放动态曲线"><i data-lucide="rotate-ccw"></i></button></div></div>
+            <div class="history-chart-shell"><canvas id="replayChart" aria-label="所选历史运行的动态曲线复盘"></canvas><div class="replay-state" id="replayState"><i></i><span>23:00</span><b>A 2.71 · B 1.86</b></div></div>
+            <div class="history-facts"><span><small>进水峰值</small><b id="historyFlow">1,050 m³/h</b></span><span><small>出水红线</small><b id="historyLimit">5.0 mg/L</b></span><span><small>运行耗时</small><b id="historyDuration">3.8 s</b></span></div>
+            <div class="history-advice"><i data-lucide="file-check-2"></i><span><small>当次结论</small><strong id="historyAdvice">分两步降低曝气并保持侧流，预测全时段达标，已由值班长确认采用。</strong></span></div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <nav class="mobile-nav" aria-label="移动端导航"><button class="active" data-route="overview"><i data-lucide="layout-dashboard"></i><span>A²O</span></button><button data-route="oxidation"><i data-lucide="waves"></i><span>氧化沟</span></button><button data-route="network"><i data-lucide="waypoints"></i><span>管网</span></button><button data-route="scenarios"><i data-lucide="git-compare-arrows"></i><span>情景</span></button><button data-route="advisor"><i data-lucide="sparkles"></i><span>策略</span></button><button data-route="history"><i data-lucide="history"></i><span>记录</span></button></nav>
+  </div>
+
+  <div class="toast" id="toast"><i data-lucide="circle-check"></i><span></span></div>
+  <script src="assets/vendor/lucide.min.js"></script>
+  <script src="assets/three.min.js?v=0.160.1"></script>
+  <script src="portable.js?v=20261005"></script>
+  <script src="model-bridge.js?v=20261006-round2"></script>
+  <script src="visual-refinement.js?v=20261006"></script>
+  <script src="realism.js?v=20261006-round2"></script>
+  <script src="fullscreen.js?v=20261006-normal"></script>
+  <script src="network.js?v=20261006-stable"></script>
+  <script src="app.js?v=20261006-stable"></script>
+</body>
+</html>

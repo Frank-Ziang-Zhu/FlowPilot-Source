@@ -1,0 +1,107 @@
+{
+  "credit": "Powered by Poly Haven",
+  "license_source": "https://polyhaven.com/license",
+  "files": [
+    {
+      "file": "concrete-color.jpg",
+      "asset": "concrete_wall_003",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_003/concrete_wall_003_diff_1k.jpg",
+      "license": "CC0",
+      "md5": "1277cc6bcfc8e4f074f9852fbf19b2d3"
+    },
+    {
+      "file": "concrete-normal.jpg",
+      "asset": "concrete_wall_003",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_003/concrete_wall_003_nor_gl_1k.jpg",
+      "license": "CC0",
+      "md5": "ba9639f62ebd5434f5bd8fb97415c1ad"
+    },
+    {
+      "file": "concrete-rough.jpg",
+      "asset": "concrete_wall_003",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_003/concrete_wall_003_rough_1k.jpg",
+      "license": "CC0",
+      "md5": "ab6b1e23e0040d5e467d27d10fad998e"
+    },
+    {
+      "file": "concrete-ao.jpg",
+      "asset": "concrete_wall_003",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_003/concrete_wall_003_ao_1k.jpg",
+      "license": "CC0",
+      "md5": "2b00fe314bdabf2141cb031a5b87ab4b"
+    },
+    {
+      "file": "asphalt-color.jpg",
+      "asset": "asphalt_02",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_diff_1k.jpg",
+      "license": "CC0",
+      "md5": "fa19772d4817754c3efab708c651f5a8"
+    },
+    {
+      "file": "asphalt-normal.jpg",
+      "asset": "asphalt_02",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_nor_gl_1k.jpg",
+      "license": "CC0",
+      "md5": "338da8de636ea36133170578cac82e8e"
+    },
+    {
+      "file": "asphalt-rough.jpg",
+      "asset": "asphalt_02",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_rough_1k.jpg",
+      "license": "CC0",
+      "md5": "ec80a2929797c1b3ffc121c4f665585a"
+    },
+    {
+      "file": "asphalt-ao.jpg",
+      "asset": "asphalt_02",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_ao_1k.jpg",
+      "license": "CC0",
+      "md5": "db52e3eb4895bbf347246fe8d2d0ebe7"
+    },
+    {
+      "file": "industrial-sunset.hdr",
+      "asset": "industrial_sunset_02",
+      "source": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/industrial_sunset_02_2k.hdr",
+      "license": "CC0",
+      "md5": "d764f93706cd34aaa96b8b6d3dda920b"
+    },
+    {
+      "file": "tree-impostor-0.png",
+      "derived_from": "tree_small_02",
+      "license": "CC0",
+      "sha256": "3826f55d31c4aa0e56edeeba31bbc4f4291dccc984dd6096c8be6ea80d705f9d"
+    },
+    {
+      "file": "tree-impostor-1.png",
+      "derived_from": "tree_small_02",
+      "license": "CC0",
+      "sha256": "696a3614b102f17552b4ceb878abc1abae536739eac5a45fd8fd1a74f1f3118c"
+    },
+    {
+      "file": "tree-impostor-2.png",
+      "derived_from": "tree_small_02",
+      "license": "CC0",
+      "sha256": "58e065511fee93fc272c766cdd1a9e416e94967ddb1ef28b60cab4902ce24e1f"
+    },
+    {
+      "file": "tree-impostor-3.png",
+      "derived_from": "tree_small_02",
+      "license": "CC0",
+      "sha256": "08c8a90e7fa6782e2582e5baa124f6de16ae5296d4787681be05fefab8d2e76e"
+    }
+  ],
+  "vegetation": {
+    "asset": "tree_small_02",
+    "source": "https://polyhaven.com/a/tree_small_02",
+    "license": "CC0",
+    "input_triangles": 2062487,
+    "delivery": "models/blender/refined/vegetation-source.blend (packed original scan)",
+    "runtime": "four 768px RGBA views baked from the original scan; camera-facing LOD cards, not the decimated tree.glb experiment"
+  },
+  "addons": {
+    "source": "https://github.com/mrdoob/three.js/tree/r160/examples/jsm",
+    "license": "MIT",
+    "revision": "r160",
+    "delivery": "assets/vendor/addons/"
+  }
+}

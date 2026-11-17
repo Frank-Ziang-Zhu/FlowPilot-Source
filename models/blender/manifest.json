@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "units": "meter",
+  "description": "Optional GLB detail overlays. Procedural scenes always remain the fallback.",
+  "scenes": {
+    "overview": {"enabled": true, "file": "models/blender/refined/overview-details.glb", "position": [0, 0, 0], "rotation": [0, 0, 0], "scale": 1, "hideUnits": []},
+    "oxidation": {"enabled": true, "file": "models/blender/refined/oxidation-details.glb", "position": [0, 0, 0], "rotation": [0, 0, 0], "scale": 1, "hideUnits": []},
+    "network": {"enabled": true, "file": "models/blender/refined/network-details.glb", "position": [0, 0, 0], "rotation": [0, 0, 0], "scale": 1, "hideUnits": []}
+  }
+}

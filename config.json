@@ -1,0 +1,10 @@
+{
+  "default_engine": "asm",
+  "host": "127.0.0.1",
+  "port": 8787,
+  "sumo_python": "",
+  "sumo_project_root": "models/sumo",
+  "sumo_pythonpath": "",
+  "sumo_process": "a2o",
+  "sumo_timeout_seconds": 180
+}
