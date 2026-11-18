@@ -16,7 +16,7 @@ python server.py --open
 
 Windows也可双击 `start_flowpilot.bat`；macOS/Linux运行 `sh start_flowpilot.sh`（这两个系统尚未实机验收）。无需执行pip install。必须通过本地服务打开，不能直接双击index.html。源码版不附带Python运行时。
 
-默认仅监听127.0.0.1:8787；端口被占用时自动尝试后续端口，以启动窗口显示的地址为准。也可指定 `python server.py --port 8890 --open`。运行不依赖外网CDN。此服务用于本地演示，不是公网生产服务器。
+默认仅监听127.0.0.1:8787；端口被占用时自动尝试后续端口，以启动窗口显示的地址为准。也可指定 `python server.py --port 8890 --open`。运行不依赖外网CDN。
 
 ## 三个场景
 
