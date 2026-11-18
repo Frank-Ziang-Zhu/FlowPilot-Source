@@ -1,6 +1,6 @@
-# FlowPilot · 污水处理数字孪生演示平台
+# FlowPilot · 污水处理厂网数字孪生智能体平台
 
-本地运行的三维工艺展示与决策演示：A²O全厂、Carrousel氧化沟、泵站管网。支持场景切换、情景输入、简化ASM方案比较、全屏展示及Blender细节模型。
+本地运行的三维工艺展示与决策演示：A²O全厂、Carrousel氧化沟、泵站管网。支持场景切换、情景输入、ASM方案比较、全屏展示及Blender细节模型。
 
 ## 下载与启动
 
@@ -58,8 +58,7 @@ Windows便携版可使用 `runtime\python.exe -m unittest discover -s tests -v`�
 
 ## 使用与第三方许可
 
-本次提供可查看源代码的演示发布，尚未为项目自有代码指定MIT/Apache等通用开源许可；商业使用、改作和再分发权限请联系项目权利人确认。第三方组件继续适用各自许可，见 `THIRD_PARTY_NOTICES.txt`。不以公开代码替代学校或合作方成果授权。
-
+本次提供可查看源代码的演示发布，尚未为项目自有代码指定MIT/Apache等通用开源许可；商业使用、改作和再分发权限请联系项目权利人确认。第三方组件继续适用各自许可，见 `THIRD_PARTY_NOTICES.txt`。
 ## 重新制作Windows包
 
 运行 `python tools/build_windows.py`，构建程序下载并校验固定版本官方Python嵌入包，生成dist目录中的Windows ZIP。需要构建电脑联网；使用者启动不需要下载依赖。新版本发布前请更新脚本版本号并重新验收。
